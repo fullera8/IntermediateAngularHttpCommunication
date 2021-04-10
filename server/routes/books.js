@@ -7,7 +7,7 @@ var router = express.Router();
 router.route('/')
     .get(function(req, res) {
         var data = getBookData();
-        res.send(data);
+        setTimeout(() => { res.send(data) }, 2000);
     })
 
     .post(function(req, res) {
