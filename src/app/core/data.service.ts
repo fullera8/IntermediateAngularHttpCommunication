@@ -62,4 +62,30 @@ export class DataService {
         tap(classicBook => console.log(classicBook))
       );
   }
+
+  addBook(newBook: Book): Observable<Book> {
+    console.log(`add new book`);
+
+    return this.http.post<Book>(`/api/books`, newBook, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    });
+  }
+
+  updateBook(updatedBook: Book): Observable<void> {
+    console.log(`update book ${updatedBook.bookID}`);
+
+    return this.http.put<void>(`/api/books/${updatedBook.bookID}`, updatedBook, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    });
+  }
+
+  deleteBook(bookId: number): Observable<void> {
+    console.log(`delete book ${bookId}`);
+
+    return this.http.delete<void>(`/api/books/${bookId}`);
+  }
 }
