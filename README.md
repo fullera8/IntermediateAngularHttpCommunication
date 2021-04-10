@@ -1,0 +1,2 @@
+# IntermediateAngularHttpCommunication
+Pluralsight Intermediate Angular Course Http Communication
