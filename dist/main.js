@@ -213,6 +213,8 @@ let EditBookComponent = class EditBookComponent {
         //this.selectedBook = this.dataService.getBookById(bookID);
         this.dataService.getBookById(bookID).
             subscribe((data) => this.selectedBook = data, (err) => console.log(err), () => console.log('get book complete'));
+        this.dataService.getOldBookById(bookID).
+            subscribe((data) => console.log(`Old book title: ${data.bookTitle}`), (err) => console.log(err), () => console.log('get old book complete'));
     }
     setMostPopular() {
         this.dataService.setMostPopularBook(this.selectedBook);
@@ -314,7 +316,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
-/* harmony import */ var app_data__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! app/data */ "AVqD");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ "kU1M");
+/* harmony import */ var app_data__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! app/data */ "AVqD");
+
 
 
 
@@ -322,16 +326,16 @@ __webpack_require__.r(__webpack_exports__);
 let DataService = class DataService {
     constructor(http) {
         this.http = http;
-        this.mostPopularBook = app_data__WEBPACK_IMPORTED_MODULE_3__["allBooks"][0];
+        this.mostPopularBook = app_data__WEBPACK_IMPORTED_MODULE_4__["allBooks"][0];
     }
     setMostPopularBook(popularBook) {
         this.mostPopularBook = popularBook;
     }
     getAllReaders() {
-        return app_data__WEBPACK_IMPORTED_MODULE_3__["allReaders"];
+        return app_data__WEBPACK_IMPORTED_MODULE_4__["allReaders"];
     }
     getReaderById(id) {
-        return app_data__WEBPACK_IMPORTED_MODULE_3__["allReaders"].find(reader => reader.readerID === id);
+        return app_data__WEBPACK_IMPORTED_MODULE_4__["allReaders"].find(reader => reader.readerID === id);
     }
     getAllBooks() {
         console.log('Get all books');
@@ -349,6 +353,14 @@ let DataService = class DataService {
                 'Authorization': 'my-token'
             })
         });
+    }
+    getOldBookById(id) {
+        console.log(`get old book ${id}`);
+        return this.http.get(`/api/books/${id}`)
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(b => ({
+            bookTitle: b.title,
+            year: b.publicationYear
+        })), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["tap"])(classicBook => console.log(classicBook)));
     }
 };
 DataService.ctorParameters = () => [
