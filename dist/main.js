@@ -324,8 +324,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ "kU1M");
-/* harmony import */ var app_data__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! app/data */ "AVqD");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ "qCKp");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs/operators */ "kU1M");
+/* harmony import */ var app_data__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! app/data */ "AVqD");
+/* harmony import */ var app_models_bookTrackerError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! app/models/bookTrackerError */ "+5Uy");
+
+
 
 
 
@@ -334,20 +338,28 @@ __webpack_require__.r(__webpack_exports__);
 let DataService = class DataService {
     constructor(http) {
         this.http = http;
-        this.mostPopularBook = app_data__WEBPACK_IMPORTED_MODULE_4__["allBooks"][0];
+        this.mostPopularBook = app_data__WEBPACK_IMPORTED_MODULE_5__["allBooks"][0];
     }
     setMostPopularBook(popularBook) {
         this.mostPopularBook = popularBook;
     }
     getAllReaders() {
-        return app_data__WEBPACK_IMPORTED_MODULE_4__["allReaders"];
+        return app_data__WEBPACK_IMPORTED_MODULE_5__["allReaders"];
     }
     getReaderById(id) {
-        return app_data__WEBPACK_IMPORTED_MODULE_4__["allReaders"].find(reader => reader.readerID === id);
+        return app_data__WEBPACK_IMPORTED_MODULE_5__["allReaders"].find(reader => reader.readerID === id);
     }
     getAllBooks() {
         console.log('Get all books');
-        return this.http.get('/api/books');
+        return this.http.get('/api/books')
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["catchError"])(err => this.handleHttpError(err)));
+    }
+    handleHttpError(err) {
+        let dataError = new app_models_bookTrackerError__WEBPACK_IMPORTED_MODULE_6__["BookTrackerError"]();
+        dataError.errorNumber = 100;
+        dataError.message = err.statusText;
+        dataError.friendlyMessage = 'An error occured while retrieving data, please contact the help desk';
+        return Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["throwError"])(dataError);
     }
     getBookById(id) {
         console.log(`get book ${id}`);
@@ -365,10 +377,10 @@ let DataService = class DataService {
     getOldBookById(id) {
         console.log(`get old book ${id}`);
         return this.http.get(`/api/books/${id}`)
-            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(b => ({
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["map"])(b => ({
             bookTitle: b.title,
             year: b.publicationYear
-        })), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["tap"])(classicBook => console.log(classicBook)));
+        })), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["tap"])(classicBook => console.log(classicBook)));
     }
     addBook(newBook) {
         console.log(`add new book`);
@@ -431,7 +443,7 @@ let DashboardComponent = class DashboardComponent {
     }
     ngOnInit() {
         this.dataService.getAllBooks()
-            .subscribe((data) => this.allBooks = data, (err) => console.log(err), () => console.log('Get all books complete'));
+            .subscribe((data) => this.allBooks = data, (err) => console.log(err.friendlyMessage), () => console.log('Get all books complete'));
         this.allReaders = this.dataService.getAllReaders();
         this.mostPopularBook = this.dataService.mostPopularBook;
         this.title.setTitle(`Book Tracker`);
