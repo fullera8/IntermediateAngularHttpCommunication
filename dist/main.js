@@ -298,6 +298,37 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "HGhH":
+/*!****************************************************!*\
+  !*** ./src/app/core/header-interceptor.service.ts ***!
+  \****************************************************/
+/*! exports provided: HeaderInterceptor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HeaderInterceptor", function() { return HeaderInterceptor; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
+
+let HeaderInterceptor = class HeaderInterceptor {
+    intercept(req, next) {
+        console.log(`HeaderInterceptor - ${req.url}`);
+        let jsonReq = req.clone({
+            setHeaders: { 'Content-Type': 'application/json' }
+        });
+        return next.handle(jsonReq);
+    }
+};
+HeaderInterceptor = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
+], HeaderInterceptor);
+
+
+
+/***/ }),
+
 /***/ "MIyZ":
 /*!********************************************************************************************!*\
   !*** ./node_modules/raw-loader/dist/cjs.js!./src/app/add-reader/add-reader.component.html ***!
@@ -598,6 +629,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _edit_book_edit_book_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./edit-book/edit-book.component */ "C9lS");
 /* harmony import */ var _edit_reader_edit_reader_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./edit-reader/edit-reader.component */ "dkrA");
 /* harmony import */ var _core_book_tracker_error_handler_service__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./core/book-tracker-error-handler.service */ "1US8");
+/* harmony import */ var _core_header_interceptor_service__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./core/header-interceptor.service */ "HGhH");
+/* harmony import */ var _core_response_logger_service__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./core/response-logger.service */ "c9X9");
+
+
 
 
 
@@ -624,7 +659,9 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
             _add_reader_add_reader_component__WEBPACK_IMPORTED_MODULE_6__["AddReaderComponent"]
         ],
         providers: [
-            { provide: _angular_core__WEBPACK_IMPORTED_MODULE_2__["ErrorHandler"], useClass: _core_book_tracker_error_handler_service__WEBPACK_IMPORTED_MODULE_12__["BookTrackerErrorHandlerService"] }
+            { provide: _angular_core__WEBPACK_IMPORTED_MODULE_2__["ErrorHandler"], useClass: _core_book_tracker_error_handler_service__WEBPACK_IMPORTED_MODULE_12__["BookTrackerErrorHandlerService"] },
+            { provide: _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HTTP_INTERCEPTORS"], useClass: _core_header_interceptor_service__WEBPACK_IMPORTED_MODULE_13__["HeaderInterceptor"], multi: true },
+            { provide: _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HTTP_INTERCEPTORS"], useClass: _core_response_logger_service__WEBPACK_IMPORTED_MODULE_14__["ResponseLoggerInterceptor"], multi: true }
         ],
         imports: [
             _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
@@ -663,6 +700,42 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ("<div class=\"col-lg-5\">\n  <div class=\"well bs-component\">\n    <form class=\"form-horizontal\">\n      <fieldset>\n        <legend>Edit Book</legend>\n        <div class=\"form-group\">\n          <label for=\"inputTitle\" class=\"col-lg-3 control-label\">Title</label>\n          <div class=\"col-lg-8\">\n            <input type=\"text\" class=\"form-control\" id=\"inputTitle\" placeholder=\"Title\" [(ngModel)]=\"selectedBook && selectedBook.title\" name=\"title\">\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"inputAuthor\" class=\"col-lg-3 control-label\">Author</label>\n          <div class=\"col-lg-8\">\n            <input type=\"text\" class=\"form-control\" id=\"inputAuthor\" placeholder=\"Author\" [(ngModel)]=\"selectedBook && selectedBook.author\" name=\"author\">\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"inputYear\" class=\"col-lg-3 control-label\">Year</label>\n          <div class=\"col-lg-8\">\n            <input type=\"text\" class=\"form-control\" id=\"inputYear\" placeholder=\"Year Published\" [(ngModel)]=\"selectedBook && selectedBook.publicationYear\" name=\"publicationYear\">\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <div class=\"col-lg-8 col-lg-offset-3\">\n            <button type=\"button\" class=\"btn btn-primary\" (click)=\"saveChanges()\">Save</button>\n            <button type=\"button\" class=\"btn btn-success\" (click)=\"setMostPopular()\">Set As Most Popular</button>\n          </div>\n        </div>\n      </fieldset>\n    </form>\n  </div>\n</div>");
+
+/***/ }),
+
+/***/ "c9X9":
+/*!*************************************************!*\
+  !*** ./src/app/core/response-logger.service.ts ***!
+  \*************************************************/
+/*! exports provided: ResponseLoggerInterceptor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ResponseLoggerInterceptor", function() { return ResponseLoggerInterceptor; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ "kU1M");
+
+
+
+
+let ResponseLoggerInterceptor = class ResponseLoggerInterceptor {
+    intercept(req, next) {
+        console.log(`ResponseLoggerInterceptor - ${req.url}`);
+        return next.handle(req)
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["tap"])(event => {
+            if (event.type === _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpEventType"].Response)
+                console.log(event.body);
+        }));
+    }
+};
+ResponseLoggerInterceptor = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
+], ResponseLoggerInterceptor);
+
+
 
 /***/ }),
 
