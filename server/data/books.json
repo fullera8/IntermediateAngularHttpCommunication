@@ -34,5 +34,17 @@
         "title": "Alice's Adventures in Wonderland",
         "author": "Lewis Carroll",
         "publicationYear": "1865"
+    },
+    {
+        "bookID": 7,
+        "title": "Angular Book",
+        "author": "Alex",
+        "publicationYear": "2020"
+    },
+    {
+        "bookID": 8,
+        "title": "Angular Book 2",
+        "author": "Alex",
+        "publicationYear": "2021"
     }
 ]
